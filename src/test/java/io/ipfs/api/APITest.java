@@ -8,6 +8,7 @@ import org.junit.*;
 
 import java.io.*;
 import java.nio.file.*;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
@@ -79,13 +80,13 @@ public class APITest {
     }
 
     @Test
-    public void singleFileTest() throws IOException {
+    public void singleFileTest() throws IOException, NoSuchAlgorithmException {
         NamedStreamable.ByteArrayWrapper file = new NamedStreamable.ByteArrayWrapper("hello.txt", "G'day world! IPFS rocks!".getBytes());
         fileTest(file);
     }
 
     @Test
-    public void wrappedSingleFileTest() throws IOException {
+    public void wrappedSingleFileTest() throws IOException, NoSuchAlgorithmException {
         NamedStreamable.ByteArrayWrapper file = new NamedStreamable.ByteArrayWrapper("hello.txt", "G'day world! IPFS rocks!".getBytes());
         List<MerkleNode> addParts = ipfs.add(file, true);
         MerkleNode filePart = addParts.get(0);
@@ -101,7 +102,7 @@ public class APITest {
     }
 
     @Test
-    public void dirTest() throws IOException {
+    public void dirTest() throws IOException, NoSuchAlgorithmException {
         NamedStreamable.DirWrapper dir = new NamedStreamable.DirWrapper("root", Arrays.asList());
         MerkleNode addResult = ipfs.add(dir).get(0);
         List<MerkleNode> ls = ipfs.ls(addResult.hash);
@@ -109,7 +110,7 @@ public class APITest {
     }
 
     @Test
-    public void directoryTest() throws IOException {
+    public void directoryTest() throws IOException, NoSuchAlgorithmException {
         Random rnd = new Random();
         String dirName = "folder" + rnd.nextInt(100);
         Path tmpDir = Files.createTempDirectory(dirName);
@@ -150,7 +151,7 @@ public class APITest {
     }
 
 //    @Test
-    public void largeFileTest() throws IOException {
+    public void largeFileTest() throws IOException, NoSuchAlgorithmException {
         byte[] largerData = new byte[100*1024*1024];
         new Random(1).nextBytes(largerData);
         NamedStreamable.ByteArrayWrapper largeFile = new NamedStreamable.ByteArrayWrapper("nontrivial.txt", largerData);
@@ -158,7 +159,7 @@ public class APITest {
     }
 
 //    @Test
-    public void hugeFileStreamTest() throws IOException {
+    public void hugeFileStreamTest() throws IOException, NoSuchAlgorithmException {
         byte[] hugeData = new byte[1000*1024*1024];
         new Random(1).nextBytes(hugeData);
         NamedStreamable.ByteArrayWrapper largeFile = new NamedStreamable.ByteArrayWrapper("massive.txt", hugeData);
@@ -182,7 +183,7 @@ public class APITest {
     }
 
     @Test
-    public void hostFileTest() throws IOException {
+    public void hostFileTest() throws IOException, NoSuchAlgorithmException {
         Path tempFile = Files.createTempFile("IPFS", "tmp");
         BufferedWriter w = new BufferedWriter(new FileWriter(tempFile.toFile()));
         w.append("Some data");
@@ -193,7 +194,7 @@ public class APITest {
     }
 
     @Test
-    public void hashOnly() throws IOException {
+    public void hashOnly() throws IOException, NoSuchAlgorithmException {
         byte[] data = randomBytes(4096);
         NamedStreamable file = new NamedStreamable.ByteArrayWrapper(data);
         MerkleNode addResult = ipfs.add(file, false, true).get(0);
@@ -202,7 +203,7 @@ public class APITest {
             throw new IllegalStateException("Object shouldn't be present!");
     }
 
-    public void fileTest(NamedStreamable file)  throws IOException{
+    public void fileTest(NamedStreamable file) throws IOException, NoSuchAlgorithmException {
         MerkleNode addResult = ipfs.add(file).get(0);
         byte[] catResult = ipfs.cat(addResult.hash);
         byte[] getResult = ipfs.get(addResult.hash);
@@ -215,7 +216,7 @@ public class APITest {
     }
 
     @Test
-    public void pinTest() throws IOException {
+    public void pinTest() throws IOException, NoSuchAlgorithmException {
         MerkleNode file = ipfs.add(new NamedStreamable.ByteArrayWrapper("some data".getBytes())).get(0);
         Multihash hash = file.hash;
         Map<Multihash, Object> ls1 = ipfs.pin.ls(IPFS.PinType.all);
@@ -235,7 +236,7 @@ public class APITest {
     }
 
     @Test
-    public void pinUpdate() throws IOException {
+    public void pinUpdate() throws IOException, NoSuchAlgorithmException {
         MerkleNode child1 = ipfs.add(new NamedStreamable.ByteArrayWrapper("some data".getBytes())).get(0);
         Multihash hashChild1 = child1.hash;
         System.out.println("child1: " + hashChild1);

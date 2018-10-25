@@ -96,6 +96,15 @@ Multihash filePointer = Multihash.fromBase58("QmPZ9gcCEpqKTo6aq61g2nXGUhM4iCL3ew
 byte[] fileContents = ipfs.cat(filePointer);
 ```
 
+To timestamp your files with OriginStamp use:
+```Java
+IPFS ipfs = new IPFS("localhost", 5001, "/api/v0/", false, new OriginStamp("Insert your api key"));
+NamedStreamable.ByteArrayWrapper file = new NamedStreamable.ByteArrayWrapper("hello.txt", "test".getBytes());
+
+MerkleNode addResult = ipfs.add(file).get(0);
+
+System.out.println(ipfs.getTimestamp(file, OriginStamp.CryptoCurrency.BITCOIN).get());
+```
 ## Dependencies
 
 Current versions of dependencies are included in the `./lib` directory.
